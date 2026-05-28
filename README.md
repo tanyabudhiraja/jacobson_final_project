@@ -58,7 +58,7 @@ lme_all_outcomes.csv       coefficients across all 7 outcomes with p_fdr
 sensitivity_results.csv    4 sensitivity configurations
 logit_sensitivity.csv      logit-transformed fatigue check
 mlvar_results.csv          multilevel VAR bidirectional paths
-ols_results.csv            between-person OLS R² (behavior-only + all-features)
+ols_results.csv            between-person OLS R^2 (behavior-only + all-features)
 analysis_results.png       8-panel summary figure
 ```
 
