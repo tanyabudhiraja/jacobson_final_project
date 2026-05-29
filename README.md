@@ -8,15 +8,15 @@ Analysis code for a longitudinal mobile sensing study of major depressive disord
 ## scripts
 
 ```
-pipeline.py            raw data → nightly_summary/ (stages 0–3)
-add_cats.py            app → category lookup, used by pipeline stage 1
-merging.py             standalone copy of pipeline stage 1 (sleep + apps → merges/)
-build_dataset.py       nightly_summary/ → dataset/dataset.csv (QC + feature engineering)
-prepare_model_data.py  dataset/dataset.csv → lme_data.csv + ml_data.csv (centering, lagging)
-run_analysis.py        lme_data.csv → results/ (all analyses)
+pipeline.py            raw data -> nightly_summary/ (stages 0–3)
+add_cats.py            app -> category lookup, used by pipeline stage 1
+merging.py             standalone copy of pipeline stage 1 (sleep + apps -> merges/)
+build_dataset.py       nightly_summary/ -> dataset/dataset.csv (QC + feature engineering)
+prepare_model_data.py  dataset/dataset.csv -> lme_data.csv + ml_data.csv (centering, lagging)
+run_analysis.py        lme_data.csv -> results/ (all analyses)
 ```
 
-`add_cats.py` reads `Apps_categorization_final.csv` (app package → category, including Social
+`add_cats.py` reads `Apps_categorization_final.csv` (app package -> category, including Social
 Media / Communication). Stage 1 needs it; without it those app features fall back to UNKNOWN.
 The path is set at the top of `add_cats.py`.
 
