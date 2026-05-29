@@ -1,27 +1,36 @@
 # jacobson_final_project
-Analysis code for a longitudinal mobile sensing study of major depressive disorder.  
+
+Analysis code for a longitudinal mobile sensing study of major depressive disorder.
 252 participants, 17,709 nights, GPS + smartphone + EMA data (June 2021 – March 2024).
 
 ---
 
-## pipeline
+## scripts
+
 ```
-pipeline.py               raw data → nightly_summary/
-build_dataset.py         nightly_summary/ → dataset/dataset.csv (QC + feature engineering)
-prepare_model_data.py    dataset/dataset.csv → lme_data.csv + ml_data.csv (centering, lagging)
-run_analysis.py          lme_data.csv → results/ (all analyses)
+pipeline.py            raw data → nightly_summary/ (stages 0–3)
+add_cats.py            app → category lookup, used by pipeline stage 1
+merging.py             standalone copy of pipeline stage 1 (sleep + apps → merges/)
+build_dataset.py       nightly_summary/ → dataset/dataset.csv (QC + feature engineering)
+prepare_model_data.py  dataset/dataset.csv → lme_data.csv + ml_data.csv (centering, lagging)
+run_analysis.py        lme_data.csv → results/ (all analyses)
 ```
+
+`add_cats.py` reads `Apps_categorization_final.csv` (app package → category, including Social
+Media / Communication). Stage 1 needs it; without it those app features fall back to UNKNOWN.
+The path is set at the top of `add_cats.py`.
 
 ---
 
 ## usage
+
 ```bash
-# step 1 — run all pipeline stages (0–3)
+# step 1 — run all pipeline stages (0–3); stage 1 builds merges/ using add_cats.py
 python pipeline.py
 
 # or run specific stages
 python pipeline.py 3        # stage 3 only (nightly summary)
-python pipeline.py 1 2      # stages 1 & 2 (sleep merge + GPS parsing)
+python pipeline.py 1 2      # stages 1 & 2 (sleep/app merge + GPS parsing)
 python pipeline.py diagnose # inspect without rerunning
 
 # step 2 — QC + feature engineering
@@ -32,25 +41,30 @@ python prepare_model_data.py
 
 # step 4 — mixed-effects models, VAR, sensitivity analyses
 python run_analysis.py
-
 # or point to a specific file
 python run_analysis.py dataset/lme_data.csv
 ```
 
+`merging.py` does the same job as `python pipeline.py 1` — run it on its own only if you
+want `merges/` without the rest of the pipeline.
+
 ---
 
 ## pipeline stages
+
 | stage | input | output |
 |-------|-------|--------|
 | 0 | `unlock/` + `running_app_123/` | `unlock_clean/` |
-| 1 | `sleep/` + `unlock_clean/` | `merges/` |
-| 2 | GPS raw + `merges/` | `parsed_gps/` |
+| 1 | `sleep/` + `unlock_clean/` + `running_app_123/` + `Apps_categorization_final.csv` | `merges/` |
+| 2 | raw GPS + `merges/` | `parsed_gps/` |
 | 3 | `merges/` + `parsed_gps/` + EMA | `nightly_summary/` |
 
 ---
 
 ## outputs
+
 After running `run_analysis.py`, `results/` contains:
+
 ```
 lme_nested_results.csv     LRT χ² + p_fdr across 7 outcomes
 lme_primary_coefs.csv      full coefficients for fatigue model
@@ -65,6 +79,7 @@ analysis_results.png       8-panel summary figure
 ---
 
 ## dependencies
+
 ```
 python 3.11
 pandas
@@ -78,9 +93,7 @@ scipy
 ---
 
 ## data access
-Raw data is not included. Access requires IRB approval through Dartmouth College. Contact the Jacobson Lab for details.
 
----
+Raw participant data is not included
 
-## paper
-Budhiraja et al. "Evening GPS and Digital Behavior Do Not Predict Next-Morning Fatigue or Mood in Major Depressive Disorder: A Longitudinal Mobile Sensing Study." *In preparation.*
+Access requires IRB approval through Dartmouth College
